@@ -1,0 +1,117 @@
+-- [Problem 2.5a]
+-- Names of all employees who work for First Bank Corporation.
+
+PI[person_name](SIGMA[company_name="First Bank Corporation"](works));
+
+
+-- [Problem 2.5b]
+-- Find the names and cities of residence of all employees who work for First Bank Corporation.
+
+PI[person_name, city](SIGMA[company_name="First Bank Corporation"](employee BOWTIE works));
+
+
+-- [Problem 2.5c]
+-- Find the names, street address, and cities of residence of all employees who work for First 
+-- Bank Corporation and earn more than $10,000 per annum.
+
+PI[person_name, street, city](SIGMA[salary > 10000 AND company_name="First Bank Corporation"](employee BOWTIE works));
+
+
+-- [Problem 2.5d]
+-- Find the names of all employees in this database who live in the same city as the company for 
+-- which they work. 
+
+PI[person_name](company BOWTIE employee BOWTIE works);
+
+
+-- [Problem 2.5e]
+-- Assume the companies may be located in several cities. Find all companies located in every city
+-- in which Small Bank Corporation is located.
+
+company DIVIDE PI[city](SIGMA[company_name="Small Bank Corporation"](company));
+
+-- [Problem 2.6a]
+-- Explain why Jackson does not appear in the result.
+
+-- The city of residence for each customer comes from the customer relation. Jackson is not in the
+-- customer relation, so he is left out of this new query when a natural join is used between 
+-- customer and borrower.
+
+
+-- [Problem 2.6b]
+-- Suppose that you want Jackson to appear in the result. How would you modify the database to 
+-- achieve this effect?
+
+-- We would need to add Jackson to the customer relation, with null values for the attributes
+-- customer_street and customer_city.
+
+
+-- [Problem 2.6c]
+-- Write a query using an outer join that accomplishes this desire without your having to 
+-- modify the database.
+
+PI[customer_name, customer_city, loan_number, amount]((borrower BOWTIE loan) LBOWTIE customer);
+
+
+
+-- [Problem 2.7a]
+-- Give all employees of First Bank Corporation a 10 percent salary raise.
+
+
+works <- PI[person_name, company_name, salary * 1.1](SIGMA[company_name="First Bank Corporation"](works)) UNION SIGMA[company_name!="First Bank Corporation"](works); 
+
+
+
+-- [Problem 2.7b]
+-- Give all managers in this database a 10 percent salary raise, unless the salary would be greater than $100,000.
+-- In such cases, give only a 3 percent raise.
+
+managers <- PI[manager_name AS person_name](manages) BOWTIE works;
+non_managers <- works MINUS managers;
+first_group <- SIGMA[salary * 1.1 <= 100000](managers);
+second_group <- works MINUS first_group;
+works <- PI[person_name, company, salary * 1.1](first_group) UNION PI[person_name, company, salary * 1.03](second_group) UNION non_managers;
+
+
+
+-- [Problem 2.7c]
+-- Delete all tuples in the works relation for employees of Small Bank Corporation.
+
+works <- SIGMA[company_name != "Small Bank Corporation"](works);
+
+
+-- [Problem 2.8a]
+-- Write relational-algebra query to find accounts held by more than two customers using an aggregate function.
+
+PI[account_number](SIGMA[customer_count > 2]([account_number]GROUP[count(customer_name) AS customer_count](depositor)));
+
+
+-- [Problem 2.8b]
+-- Write relational-algebra query to find accounts held by more than two customers without using aggregate functions. 
+
+PI[account_number](SIGMA[n1.customer_name != n2.customer_name AND n2.customer_name != n3.customer_name AND n1.customer_name != n3.customer_name AND n1.account_number = n2.account_number AND n2.account_number = n3.account_number](RHO[n1](depositor) CROSS RHO[n2](depositor) CROSS RHO[n3](depositor)));
+
+-- [Problem 2.9a]
+-- Find the company with the most employees.
+
+company_counts <- [company_name]GROUP[count(person_name) AS employee_count](works);
+max_employee <- (GROUP[max(employee_count) AS max_employee_count](company_counts));
+PI[company_name](SIGMA[employee_count = max_employee_count](company_counts CROSS max_employee));
+
+
+-- [Problem 2.9b]
+-- Find the company with the smallest payroll.
+
+company_payroll <- [company_name]GROUP[sum(salary) AS payroll](works);
+min_payroll <- [company_name]GROUP[min(payroll) AS min_company_payroll](company_payroll);
+PI[company_name](SIGMA[payroll = min_company_payroll](company_payroll CROSS min_payroll));
+
+
+-- [Problem 2.9c]
+-- Find those companies whose employees earn a higher salary, on average, than the average salary at First Bank Corporation.
+
+average_salaries <- [company_name]GROUP[average(salary) AS average_salary](works);
+average_First_Bank <- PI[average_salary](SIGMA[company_name = "First Bank Corporation"](average_salaries));
+PI[company_name](SIGMA[average_salaries.average_salary > average_First_Bank.average_salary](average_salaries CROSS average_First_Bank));
+
+

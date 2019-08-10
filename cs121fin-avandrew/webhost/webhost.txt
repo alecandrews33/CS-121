@@ -1,0 +1,66 @@
+You can put your answers for Problem 1.2 in this file.
+
+ * You can write explanatory text as plain-text without any kind of comment
+   markup.
+
+ * Keep all lines to 80 characters or less!
+
+ * When writing relation schemas, you can indicate primary-key attributes
+   by enclosing them with asterisks, e.g. R1(*A*, B, C), R2(*C*, D)
+
+ * Don't forget that primary key attributes should always come first
+   when writing relation schemas
+
+-------------------------------------------------------------------------------
+server(*hostname*, operating_sys)
+* hostname is a foreign key to has_installed.hostname
+* No attributes can be NULL
+
+shared(*hostname*, max_sites)
+* hostname is a foreign key to server.hostname
+* Note that max sites must be greater than 1
+* No attributes can be NULL
+
+dedicated(*hostname*, max_sites)
+* hostname is a foreign key to server.hostname
+* Note that max sites must be equal to 1
+* No attributes can be NULL
+
+account(*username*, account_type, email, url, timestamp, price)
+
+basic(*username*, account_type, hostname)
+
+* username, account_type is a foreign key to 
+* (account.username, account.account_type)
+* hostname is a foreign key to shared.hostname
+* By including hostname, we don't need a relation for the 
+* shares relationship in our E-R model.
+* No attributes can be NULL
+
+preferred(*username*, account_type, hostname)
+
+* username, account_type is a foreign key to 
+* (account.username, account.account_type)
+* hostname is a foreign key to dedicated.hostname
+* hostname is a candidate key
+* By including hostname, we don't need a relation for the 
+* dedicates relationship from our E-R model.
+* No attributes can be NULL
+
+sw_packages(*package_name*, *version*, description, cost)
+* (package_name, version) is a foreign key to 
+* has_installed (package_name, version) and is a 
+* primary key. 
+* No attributes can be NULL
+
+uses(*username*, *name*, *version*)
+* username is a foreign key to account.username
+* (package_name, version) is a foreign key to 
+* (sw_packages.name, sw_packages.version)
+* No attributes can be NULL
+
+has_installed(*hostname*, *name*, *version*)
+* No attributes can be NULL
+
+
+

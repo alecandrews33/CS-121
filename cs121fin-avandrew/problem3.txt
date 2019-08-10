@@ -1,0 +1,78 @@
+You can put your answers for Problem 3 in this file.  Follow this notation for
+writing your answers in text format:
+
+ * You can write functional dependencies as A -> B
+
+ * You can write a set of functional dependencies as { A -> BC, C -> D }
+
+ * You can write attribute-set closure as {A}+ etc.
+
+ * You can write multivalued dependencies as A ->> B
+
+ * You can write explanatory text as plain-text without any kind of comment
+   markup.
+
+ * Keep all lines to 80 characters or less!
+
+ * When writing relation schemas, you can indicate primary-key attributes
+   by enclosing them with asterisks, e.g. R1(*A*, B, C), R2(*C*, D)
+
+ * Don't forget that primary key attributes should always come first
+   when writing relation schemas
+
+-- [Problem 3a]
+
+AI is a candidate key. First, we will show that it is a superkey by 
+computing {AI}+.
+
+Start with {AI}+ = AI
+A -> G causes {AI}+ = AIG
+G -> BH causes {AI}+ = AIGBH
+BI -> C causes {AI}+ = AIGBHC = R
+
+Thus, AI is a superkey. Now, we will show it is a candidate key by
+showing that none of its subsets are superkeys (making it a minimal
+superkey).
+
+Start with {A}+ = A
+A -> G causes {A}+ = AG
+G -> BH causes {A}+ = AGBH
+
+Thus, {A}+ does not equal R, and A is not a super key.
+
+Start with {I}+ = I
+I doesn't functionally determine any other attributes.
+
+Thus, {I}+ does not equal R, and I is not a super key. 
+Therefore, AI is a candidate key.
+
+-- [Problem 3b]
+
+1. Set F_c = F = {A -> B, BI -> C, AG -> H, G -> BH, A -> G}.
+2. Apply union rule on A -> B and A -> G to get 
+   F_c = {A -> BG, BI -> C, AG -> H, G -> BH}
+3. B is extraneous to A -> BG. Consider the set 
+   F_c* = {A -> G, BI -> C, AG -> H, G -> BH}.
+   {AI}+ = {ABCGHI}, which includes B. Left with 
+   F_c = {A -> G, BI -> C, AG -> H, G -> BH}.
+4. H is extraneous in AG -> H. Consider the set
+   F_c* = {A -> G, BI -> C, G -> BH}. 
+   {AI}+ = {ABCGHI}, which includes H. Left with 
+   F_c = {A -> G, BI -> C, G -> BH}.
+
+-- [Problem 3c]
+
+We will use the 3NF Synthesis Algorithm.
+
+Start with F_c, our canonical cover for F from part b. 
+A -> G, A U G is not in any of the schemas. Thus, R_1 = {AG}.
+BI -> C, BI U C is not in any of the schemas. R_2 = {BIC}.
+G -> BH, G U BH isn't in any schemas. R_3 = {GBH}.
+No schema contains a candidate key for R. Thus,
+R_4 = {AI}. The resulting decomposition is (R_1, R_2, R_3, R_4}.
+Candidate key for R_1 is A since A -> G.
+Candidate key for R_2 is BI since BI -> C.
+Candidate key for R_3 is G since G -> BH.
+Candidate key for R_4 is AI, since neither attribute 
+is functionally dependent on the other. 
+

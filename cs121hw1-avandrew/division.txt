@@ -1,0 +1,34 @@
+-- [Problem 1a]
+-- PI[R - S] gives the names of the people in a given relation. Thus, when called on 
+-- monkey_likes, this gives all of the names in the monkey_likes relation. Next, we will
+-- look at the Cartesian product term, and see that it is the names of the people 
+-- in the monkey_likes relation crossed with the types of foods in monkey_foods. From 
+-- this we subtract what is basically the monkey_likes relation (in a specific order). 
+-- What remains from this are any names that did not like every food in monkey_likes. This 
+-- is because we took the Cartesian product of the names and types of food and then 
+-- subtracted the tuples that we have from monkey_likes relation. When we subtract 
+-- this set from what we started with (the names in monkey_likes) the only names that 
+-- remain will be those that liked every type of monkey food. 
+
+
+-- [Problem 1b]
+-- The exact version of the division operator will be:
+-- r DIVIDE[E] s = (r DIVIDE s) MINUS (PI[R-S](PI[R-S,S](r) MINUS (PI[R-S](r) CROSS s))
+-- By flipping the ordering of the inner two terms of the second term in the 
+-- original equation, we get any names that have food likes that are outside of 
+-- the types of available monkey food. We computed the set difference of monkey_likes
+-- with all of the possible tuples combining names and food types from monkey_foods, so 
+-- the only things that remain will be outside of monkey_foods. These can be MINUSed 
+-- from the original division definition to get rid of any names that liked things outside
+-- of monkey_foods. 
+
+
+
+-- [Problem 1c]
+-- Our relational algebra expression is the following:
+-- [R-S]GROUP[count(S) as foods](r BOWTIE s) BOWTIE [R-S]GROUP[count(S) as foods](s);
+-- This will get the number of foods that each monkey_likes from monkey_foods and then 
+-- only return those that have all of the foods from monkey_likes.
+
+
+

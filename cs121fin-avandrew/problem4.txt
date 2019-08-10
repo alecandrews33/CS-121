@@ -1,0 +1,86 @@
+You can put your answers for Problem 4 in this file.  Follow this notation for
+writing your answers in text format:
+
+ * You can write functional dependencies as A -> B
+
+ * You can write a set of functional dependencies as { A -> BC, C -> D }
+
+ * You can write attribute-set closure as {A}+ etc.
+
+ * You can write multivalued dependencies as A ->> B
+
+ * You can write explanatory text as plain-text without any kind of comment
+   markup.
+
+ * Keep all lines to 80 characters or less!
+
+ * When writing relation schemas, you can indicate primary-key attributes
+   by enclosing them with asterisks, e.g. R1(*A*, B, C), R2(*C*, D)
+
+ * Don't forget that primary key attributes should always come first
+   when writing relation schemas
+
+-- [Problem 4a]
+
+Customers(*cust_id*, cust_address, cust_phone)
+
+All Functional dependencies that hold on this schema have 
+cust_id on the LHS, and that is the primary key of the 
+schema. cust_id is thus the only candidate key.
+
+orders(*order_id*, cust_id, order_time)
+
+All functional dependencies that hold on this schema have 
+order_id on the LHS, and that is the primary key of the 
+schema. order_id is the only candidate key, and cust_id
+has a foreign key reference to customers.cust_id.
+
+pizzas(*pizza_id*, order_id, pizza_size)
+
+All functional dependencies that hold on this schema have 
+pizza_id on the LHS, and that is the primary key of the 
+schema. pizza_id is the only candidate key, and order_id
+has a foreign key reference to orders.order_id.
+
+toppings(*pizza_id*, *toppings*)
+
+This schema is in 4NF because the only multivalued 
+dependency (pizza_id ->> topping) is trivial on this 
+relation since pizza_id U topping = R. This is a set,
+so both attributes are part of the primary key.
+The pizza_id attribute has a foreign key reference 
+to pizzas.pizza_id. The primary key is the only 
+Candidate key.
+
+-- [Problem 4b]
+
+We could create a version of the above database schema 
+That is in BCNF but not in 4NF. Consider the following 
+schemas.
+
+Customers(*cust_id*, cust_address, cust_phone)
+
+orders(*order_id*, cust_id, order_time)
+
+pizzas(*pizza_id*, *toppings*, order_id, pizza_size)
+
+We already showed in part a that customers and orders
+are in BCNF since all functional dependencies that hold
+On them have their primary keys on the LHS.
+Pizzas is also in BCNF because the only
+Functional dependency that holds on pizzas is 
+pizza_id -> order_id, pizza_size, which has pizza_id 
+on the LHS and pizza_id is part of the primary key 
+of pizzas.
+
+However, pizzas is not in 4NF because there is a 
+non-trivial multivalued dependency whose left side
+is not a super key for the relation. pizza_id is not 
+A super key for the relation because of the 
+Multivalued dependency pizza_id ->> toppings. This 
+Requires the union of pizza_id and toppings to be 
+The super key, so pizza_id alone will not suffice. 
+This multivalued dependency is non-trivial because 
+pizza_id is not a subset of toppings, and pizza_id 
+Union with toppings does not equal R (it is missing 
+order_id and pizza_size). 

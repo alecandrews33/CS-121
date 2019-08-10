@@ -1,0 +1,57 @@
+-- [Problem 1a]
+-- These two statements are equivalent. Since THETA only uses attributes from A,
+-- and the aggregate function groups on A, it does not matter the order in which 
+-- these functions are applied. The result will be the same as we either aggregate 
+-- based on the A grouping after we've selected particular tuples based on A, or we 
+-- aggregate based on the A grouping and then select particular tuples based on A.
+
+
+-- [Problem 1b]
+-- These two statements are not equivalent. Consider the case where r = {(1, "A"), (2, 
+-- "B")} and s = {(1, "A"), (2, "C")}. The left hand side would result in {(2)} since  
+-- the set difference would remove (1, "A") and then projecting on A would give the A 
+-- attribute from the remaining tuple (2, "B"). The right hand side would result in {}
+-- since projecting on A on r would give {(1), (2)} and on s would give {(1), (2)} as 
+-- well. Thus, these relations are equal and the set difference yields no remaining
+-- tuples. 
+
+
+
+-- [Problem 1c]
+-- These two statements are not equivalent. Consider the case where r = {(1, "A"), 
+-- (2,"B")}, s = {(1, "C"), (3, "D")}, t = {(2, "E"), (3, "F")}. In this case, the left
+-- hand side will yield {(1, "A", "C"), (2, "B", null)} after the first outer join and 
+-- then {(1, "A", "C", null), (2, "B", null, "E")} after the second. The right hand side 
+-- will yield {(1, "C", null), (3, "D", "F")} when s is joined with t, and finally
+-- {(1, "A", "C", null), (2, "B", null, null)} when r is joined. Essentially, the left 
+-- hand side will maintain values from t that have equal common attributes with r, even
+-- if s doesn't also share that equal common attribute. The right hand side, after the 
+-- first outer join, loses any values from t that didn't share the equal common attribute
+-- with s. Thus, when joined with r, null values appear because r's common attribute isn't
+-- equal to what is now there (for the value that was equal to the value of the common 
+-- attribute in t). 
+
+
+
+-- [Problem 1d]
+-- These two statements are equivalent. Since THETA only concerns attributes from r, 
+-- outer joining r with s will still maintain the tuples that were originally in r. Now, 
+-- they just have more attributes appended to them, but the SELECT operator will still
+-- only care about the attributes that came from r. On the right hand side, performing
+-- SELECT before the join produces the same result because you just pick the tuples you 
+-- want from r and then outer join them with the tuples from s. 
+
+
+
+-- [Problem 1e]
+-- These two statements are not equivalent. Let's say we have relation r with 
+-- schema (a, b1) and s with schema (a, b2). Consider the case where r = {(1, "A"), 
+-- (2, "B")} and s = {(2, "C"), (3, "D")}. Then the left hand side yields 
+-- {(1, "A", null), (2, "B", "C")} after the join and the select operator will not select
+-- the (1, "A", null) tuple since it's attribute from s is null. For the right side, no 
+-- matter which tuples are selected from s, the outer join will still include the tuple 
+-- (1, "A", null) since it includes tuples from r that aren't in s. Thus, this tuple will 
+-- be in the final result, but it wasn't on the left side, so these aren't equivalent. 
+
+
+
